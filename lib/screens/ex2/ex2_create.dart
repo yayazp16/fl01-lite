@@ -25,8 +25,10 @@ class _Ex2CreatePageState extends State<Ex2CreatePage> {
   void addMemo() async {
     var box = await Hive.openBox("memos");
     if (widget.isCreate) {
+      // If create mode: add new memo to database
       await box.add(textEditingController.value.text);
     } else {
+      // If edit mode: update memo
       await box.putAt(widget.id, textEditingController.value.text);
     }
   }

@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 
 class Ex0Page extends StatefulWidget {
   const Ex0Page({Key? key}) : super(key: key);
-  
+
   @override
   _Ex0PageState createState() => _Ex0PageState();
 }
@@ -27,15 +27,19 @@ class _Ex0PageState extends State<Ex0Page> {
     '大凶'
   ];
   var unsei = '';
+
+  //  Random from omikujiList
   String fortune() {
     var rand = Random().nextInt(omikujiList.length);
     return omikujiList[rand];
   }
+
   @override
   void initState() {
     unsei = fortune();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

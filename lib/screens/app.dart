@@ -9,8 +9,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final exam = [const Ex0Page(),const Ex1Page(),const Ex2Page()];
+    // define all pages for generate button using [List.generate] below.
+    final exam = [const Ex0Page(), const Ex1Page(), const Ex2Page()];
     return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text("FL01-lite-sukon_sahunalu"),
+        ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(

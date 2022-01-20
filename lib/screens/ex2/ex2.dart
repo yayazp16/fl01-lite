@@ -13,7 +13,7 @@ class Ex2Page extends StatefulWidget {
 
 class _Ex2PageState extends State<Ex2Page> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  //late ListModel<int> _list;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,27 +42,30 @@ class _Ex2PageState extends State<Ex2Page> {
           valueListenable: Hive.box("memos").listenable(),
           builder: (context, Box<dynamic> box, child) {
             return LayoutBuilder(builder: (context, constrain) {
+              // Calculate height of MemoTile
               var h = constrain.maxHeight;
               int memoNum = 13;
-              // height of  Divider = 16
               var memoHeight = (h ~/ (memoNum)) - 1.0;
+
               return AnimatedList(
                 key: _listKey,
-                //physics: box.isEmpty ? const NeverScrollableScrollPhysics(): const ScrollPhysics(),
                 initialItemCount: memoNum,
                 itemBuilder: (context, idx, _) {
                   return GestureDetector(
-                    onTap: (){
-              
-                      Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_)  =>  Ex2CreatePage(
-                          isCreate: false,
-                          text: box.getAt(idx),
-                          id: idx,
-                        )),
-              );
+                    onTap: () {
+
+                      //If user click on valid MemoTile, set isCreate = false for edit mode.
+                      if (box.length != 0 && idx < box.length) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => Ex2CreatePage(
+                                    isCreate: false,
+                                    text: box.getAt(idx),
+                                    id: idx,
+                                  )),
+                        );
+                      }
                     },
                     child: SizedBox(
                       height: memoHeight,
@@ -76,6 +79,8 @@ class _Ex2PageState extends State<Ex2Page> {
                           children: [
                             SlidableAction(
                               onPressed: (_) async {
+
+                                //Insert dummy MemoTile to list and remove selected MemoTile
                                 AnimatedList.of(context).insertItem(box.length);
                                 AnimatedList.of(context).removeItem(idx,
                                     (context, animation) {
@@ -87,6 +92,8 @@ class _Ex2PageState extends State<Ex2Page> {
                                     ),
                                   );
                                 });
+
+                                // Delete memo from database
                                 await box.deleteAt(idx);
                               },
                               backgroundColor: Colors.red,
@@ -116,8 +123,8 @@ class MemoTile extends StatelessWidget {
     required this.box,
     required this.idx,
   }) : super(key: key);
-  final box;
-  final idx;
+  final Box<dynamic> box;
+  final int idx;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -126,14 +133,12 @@ class MemoTile extends StatelessWidget {
           children: [
             Row(
               mainAxisSize: MainAxisSize.max,
-              //crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Text(
-                    box.length - 1 >= idx
-                        ? box.getAt(idx)
-                        : '', //box.getAt(idx),
+                  child: Text(              
+                    box.length - 1 >= idx                   // idx (index) must lowwer then the database length.
+                        ? box.getAt(idx)                    // if true: get memo from database
+                        : '', //box.getAt(idx),             // false: empty string
                     style: const TextStyle(fontSize: 25),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

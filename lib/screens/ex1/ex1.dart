@@ -13,6 +13,8 @@ class Ex1Page extends StatefulWidget {
 class _Ex1PageState extends State<Ex1Page> {
   var time = '';
   late Timer timer;
+
+  
   @override
   void initState() {
     timer = Timer.periodic(const Duration(milliseconds: 300), getTimeNow);
